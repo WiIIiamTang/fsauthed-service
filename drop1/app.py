@@ -12,7 +12,7 @@ def hello_world():
 
 @app.route("/heartbeat", methods=["POST"])
 def heartbeat():
-    token = request.headers.get("Authorization")
+    token = request.headers.get("Authorization").split(" ")[1]
     bodydata = request.get_json()
     if type(bodydata) is not dict:
         try:
@@ -33,7 +33,6 @@ def heartbeat():
             "Authorization": f"Bearer {token}",
         },
     )
-    print(r.json())
     print(
         "drop1 receiving heartbeat check:",
         bodydata.get("dname")
