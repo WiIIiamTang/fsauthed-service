@@ -36,7 +36,8 @@ crontab -e
 
 ```
 @reboot python3 <abspath_to_repo>/pi/boot.py -k <abspath_to_key.json> --root <abspath_to_repo> &
-0 1 * * * python3 <abspath_to_repo>/pi/job.py -k <abspath_to_key.json> --root <abspath_to_repo>
+0 1 * * * python3 <abspath_to_repo>/pi/pull.py --root <abspath_to_repo>
+0 3 * * * python3 <abspath_to_repo>/pi/job.py -k <abspath_to_key.json> --root <abspath_to_repo>
 ```
 
 6. Save and exit the crontab file.

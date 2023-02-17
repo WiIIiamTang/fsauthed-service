@@ -79,19 +79,6 @@ def main():
     if not r.json().get("success"):
         raise RuntimeError("Failed to run patch request")
 
-    p = Popen(
-        [
-            "git",
-            "pull",
-        ],
-        cwd=args.root,
-        stdout=PIPE,
-        stderr=PIPE,
-    )
-    out, err = p.communicate()
-    print(str(out))
-    print(str(err))
-
     r = requests.post(
         f"{keydata.get('drop1')}/heartbeat",
         json={
