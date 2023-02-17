@@ -27,7 +27,7 @@ $ pwd
 4. Run the crontab command to edit the crontab file.
 
 ```
-crontab -e
+sudo crontab -e
 ```
 
 - There could be a message that says "no crontab for user - using an empty one". Select vim and continue.
