@@ -70,7 +70,7 @@ def hooks_save_log():
     if not textdata:
         return "Invalid body data", 400
 
-    logname = f'logs/log_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.txt'
+    logname = f'logs/log_{datetime.now().strftime("%Y-%m-%d_%H:%M:%S")}.txt'
     with open(logname, "w") as f:
         f.write(textdata)
 

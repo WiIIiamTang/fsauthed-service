@@ -126,6 +126,10 @@ def main():
             "shared_id": keydata.get("shared_id"),
             "textdata": out.decode("utf-8"),
         },
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f'Bearer {keydata.get("AUTH_KEY")}',
+        },
     )
     print("LOG", r.text)
 
