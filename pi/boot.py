@@ -92,19 +92,6 @@ def main():
     print(str(out))
     print(str(err))
 
-    r = requests.post(
-        keydata.get("drop1"),
-        json={
-            "dname": keydata.get("dname"),
-            "serviceId": keydata.get("serviceId"),
-            "shared_id": keydata.get("shared_id"),
-        },
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f'Bearer {keydata.get("AUTH_KEY")}',
-        },
-    )
-
 
 if __name__ == "__main__":
     main()

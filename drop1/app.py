@@ -33,6 +33,7 @@ def heartbeat():
             "Authorization": f"Bearer {token}",
         },
     )
+    print(r.json())
     print(
         "drop1 receiving heartbeat check:",
         bodydata.get("dname")
