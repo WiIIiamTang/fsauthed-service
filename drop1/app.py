@@ -10,6 +10,11 @@ def hello_world():
     return "<h3>drop-1 compute</h3>"
 
 
+@app.before_request
+def middle_fleet_auth():
+    print(request.endpoint, request.url, request.path)
+
+
 @app.route("/heartbeat", methods=["POST"])
 def heartbeat():
     token = request.headers.get("Authorization").split(" ")[1]
@@ -42,7 +47,7 @@ def heartbeat():
             if d.get("serviceId") == bodydata.get("serviceId")
         ],
     )
-    if not r.json().get("success"):
+    if r.json().get("success") is None or not r.json().get("success"):
         return "Unauthorized", 401
 
     return "OK", 200
