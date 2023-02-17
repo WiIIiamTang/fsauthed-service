@@ -13,10 +13,9 @@ def hello_world():
 @app.before_request
 def middle_fleet_auth():
     print(request.endpoint, request.url, request.path)
+    if request.endpoint == "hello_world":
+        return
 
-
-@app.route("/heartbeat", methods=["POST"])
-def heartbeat():
     token = request.headers.get("Authorization").split(" ")[1]
     bodydata = request.get_json()
     if type(bodydata) is not dict:
@@ -39,7 +38,7 @@ def heartbeat():
         },
     )
     print(
-        "drop1 receiving heartbeat check:",
+        "auth:",
         bodydata.get("dname")
         in [
             d.get("name")
@@ -50,4 +49,7 @@ def heartbeat():
     if r.json().get("success") is None or not r.json().get("success"):
         return "Unauthorized", 401
 
+
+@app.route("/heartbeat", methods=["POST"])
+def heartbeat():
     return "OK", 200
