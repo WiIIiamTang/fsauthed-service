@@ -1,6 +1,7 @@
 from flask import Flask, request
 import requests
 import json
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -52,4 +53,25 @@ def middle_fleet_auth():
 
 @app.route("/heartbeat", methods=["POST"])
 def heartbeat():
+    return "OK", 200
+
+
+@app.route("/hooks/save/log", methods=["POST"])
+def hooks_save_log():
+    bodydata = request.get_json()
+    if type(bodydata) is not dict:
+        try:
+            bodydata = json.loads(bodydata)
+        except Exception as e:
+            print(e)
+            return "Invalid body data", 400
+
+    textdata = bodydata.get("textdata")
+    if not textdata:
+        return "Invalid body data", 400
+
+    logname = f'logs/log_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.txt'
+    with open(logname, "w") as f:
+        f.write(textdata)
+
     return "OK", 200

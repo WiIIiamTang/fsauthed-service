@@ -104,7 +104,30 @@ def main():
             "Authorization": f'Bearer {keydata.get("AUTH_KEY")}',
         },
     )
-    print(r.text)
+    print("HEARTBEAT", r.text)
+
+    p = Popen(
+        [
+            "df",
+            "-h",
+            "/",
+        ],
+        cwd=args.root,
+        stdout=PIPE,
+        stderr=PIPE,
+    )
+    out, err = p.communicate()
+
+    r = requests.post(
+        f"{keydata.get('drop1')}/hooks/save/log",
+        json={
+            "dname": keydata.get("dname"),
+            "serviceId": keydata.get("serviceId"),
+            "shared_id": keydata.get("shared_id"),
+            "textdata": out.decode("utf-8"),
+        },
+    )
+    print("LOG", r.text)
 
 
 if __name__ == "__main__":
