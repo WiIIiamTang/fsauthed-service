@@ -1,5 +1,7 @@
 ## Instructions:
 
+0. SSH into the pi
+
 1. Clone the repo to the pi.
 
 ```
