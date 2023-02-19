@@ -67,7 +67,7 @@ def hooks_public_down_wlimit_page(ident, file_id):
     connection = sqlite3.connect("drop1.db")
     cursor = connection.cursor()
     res = cursor.execute(
-        f"SELECT ident_user_friendly, path, file_id, uses_left, ident, created_at, expires_at FROM files WHERE ident='{ident}' AND file_id='{file_id}'"  # noqa
+        f"SELECT ident_user_friendly, path, file_id, uses_left, ident, created_at, expires_at, file_size FROM files WHERE ident='{ident}' AND file_id='{file_id}'"  # noqa
     )
     res = res.fetchall()
     if len(res) == 0:
@@ -79,9 +79,10 @@ def hooks_public_down_wlimit_page(ident, file_id):
 
     ident_user_friendly = res[0]
     fid = res[2]
+    path = res[1]
     connection.close()
 
-    return f"<h2>{ident_user_friendly} is sending a file over: {fid} created at {res[5]}, expires at {res[6]} </h2> <br /><a href='/hooks/public/down/wlimit/{res[4]}/{fid}/d'>Download</a> <br /> <p>Uses left: {res[3]}</p>"  # noqa
+    return f"<h2>{ident_user_friendly} wants to send a file over: {path} created at {res[5]}, expires at {res[6]} </h2> <br /><a href='/hooks/public/down/wlimit/{res[4]}/{fid}/d'>Download</a> <br /> <p>Uses left: {res[3]}</p><p>Original request size: {res[7]}</p>"  # noqa
 
 
 @app.before_request
