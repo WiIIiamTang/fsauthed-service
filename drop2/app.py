@@ -72,7 +72,7 @@ def upload():
                 2,
                 0,
                 str(datetime.now()),
-                str(datetime.now() + timedelta(days=1)),
+                str(datetime.now() + timedelta(hours=2)),
                 int(request.content_length),
             ),
         )
