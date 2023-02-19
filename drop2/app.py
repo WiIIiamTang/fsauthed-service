@@ -1,5 +1,6 @@
 from flask import Flask, request
 import requests
+import json
 
 app = Flask(__name__)
 
@@ -7,6 +8,9 @@ app = Flask(__name__)
 @app.before_request
 def middle_fleet_auth():
     print(request.endpoint, request.url, request.path)
+
+    if request.headers.get("Authorization") is None:
+        return "Invalid request", 400
 
     token = request.headers.get("Authorization").split(" ")[1]
     bodydata = request.get_json()
@@ -23,7 +27,7 @@ def middle_fleet_auth():
     ENDPOINT = "https://fleet.williamtang.me/api"
 
     r = requests.get(
-        f"{ENDPOINT}/fleet/service/directive?discordAccountId={bodydata.get('shared_id')}",
+        f"{ENDPOINT}/fleet/service/directive?discordAccountId={bodydata.get('shared_id')}",  # noqa
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
