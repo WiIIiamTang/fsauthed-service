@@ -57,13 +57,15 @@ def upload():
         file_to_upload.save(path)
         con = sqlite3.connect(os.path.join("..", "drop1", "drop1.db"))
         cur = con.cursor()
+        ident = str(uuid.uuid4())
+        file_id = str(uuid.uuid4())
         cur.execute(
             "INSERT INTO files (ident, ident_user_friendly, file_id, path, uses_left, uses_total, created_at, expires_at, file_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
-                str(uuid.uuid4()),
+                ident,
                 "bill",
-                str(uuid.uuid4()),
-                str(path),
+                file_id,
+                file_to_upload.filename,
                 2,
                 0,
                 str(datetime.now()),
@@ -73,5 +75,8 @@ def upload():
         )
         con.commit()
         con.close()
-        return "File uploaded successfully", 200
+        return (
+            f"File uploaded successfully: http://drop.williamtang.me/hooks/public/down/wlimit/{ident}/{file_id}",
+            200,
+        )
     return "File upload failed", 400

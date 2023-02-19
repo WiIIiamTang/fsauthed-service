@@ -36,10 +36,14 @@ def hooks_public_down_wlimit(ident, file_id):
 
     res = res[0]
     if res[3] <= 0:
+        # delete the file
+        os.remove(os.path.join(os.getcwd(), "files", res[2]))
         return "You cannot download this anymore", 400
 
     # also check if expired
     if datetime.now() > datetime.strptime(res[4].split(".")[0], "%Y-%m-%d %H:%M:%S"):
+        # delete the file
+        os.remove(os.path.join(os.getcwd(), "files", res[2]))
         return "This file has expired", 400
 
     # abs path
