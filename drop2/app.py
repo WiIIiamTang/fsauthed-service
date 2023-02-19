@@ -79,7 +79,7 @@ def upload():
         con.commit()
         con.close()
         return (
-            f"File uploaded successfully: http://drop.williamtang.me/hooks/public/down/wlimit/{ident}/{file_id}",
+            f"File uploaded successfully: https://drop.williamtang.me/hooks/public/down/wlimit/{ident}/{file_id}",
             200,
         )
     return "File upload failed", 400
