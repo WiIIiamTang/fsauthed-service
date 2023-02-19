@@ -1,9 +1,21 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
 import requests
 import json
+import sqlite3
+import os
 from datetime import datetime
 
 app = Flask(__name__)
+con = sqlite3.connect("drop1.db")
+cur = con.cursor()
+cur.execute(
+    "CREATE TABLE IF NOT EXISTS files (ident TEXT, ident_user_friendly TEXT, file_id TEXT, path TEXT, uses_left INTEGER, uses_total INTEGER, created_at TEXT, expires_at TEXT, file_size TEXT)"  # noqa
+)
+cur.execute(
+    "CREATE TABLE IF NOT EXISTS downloaded_by (ident TEXT, file_id TEXT, ip_address TEXT)"
+)
+con.commit()
+con.close()
 
 
 @app.route("/")
@@ -11,10 +23,71 @@ def hello_world():
     return "<h3>drop-1 compute</h3>"
 
 
+@app.route("/hooks/public/down/wlimit/<string:ident>/<string:file_id>/d")
+def hooks_public_down_wlimit(ident, file_id):
+    connection = sqlite3.connect("drop1.db")
+    cursor = connection.cursor()
+    res = cursor.execute(
+        f"SELECT file_id, ident_user_friendly, path, uses_left, expires_at FROM files WHERE ident='{ident}' AND file_id='{file_id}'"  # noqa
+    )
+    res = res.fetchall()
+    if len(res) == 0:
+        return "File not found", 404
+
+    res = res[0]
+    if res[3] <= 0:
+        return "You cannot download this anymore", 400
+
+    # also check if expired
+    if datetime.now() > datetime.strptime(res[4].split(".")[0], "%Y-%m-%d %H:%M:%S"):
+        return "This file has expired", 400
+
+    # abs path
+    file_path = os.path.abspath(os.path.join(os.getcwd(), "files", res[2]))
+    fid = res[0]
+
+    cursor.execute(
+        f"UPDATE files SET uses_left=uses_left-1 WHERE ident='{ident}' AND file_id='{file_id}'"  # noqa
+    )
+    cursor.execute(
+        f"INSERT INTO downloaded_by (ident, file_id, ip_address) VALUES ('{ident}', '{file_id}', '{request.access_route[-1]}')"  # noqa
+    )
+    connection.commit()
+    connection.close()
+
+    return send_file(file_path, as_attachment=True, download_name=f"{fid}_{res[2]}")
+
+
+@app.route("/hooks/public/down/wlimit/<string:ident>/<string:file_id>")
+def hooks_public_down_wlimit_page(ident, file_id):
+    connection = sqlite3.connect("drop1.db")
+    cursor = connection.cursor()
+    res = cursor.execute(
+        f"SELECT ident_user_friendly, path, file_id, uses_left, ident, created_at FROM files WHERE ident='{ident}' AND file_id='{file_id}'"  # noqa
+    )
+    res = res.fetchall()
+    if len(res) == 0:
+        return "File not found", 404
+
+    res = res[0]
+    if res[3] <= 0:
+        return "You cannot download this anymore", 400
+
+    ident_user_friendly = res[0]
+    fid = res[2]
+    connection.close()
+
+    return f"<h2>{ident_user_friendly} is sending a file over: {fid} created at {res[5]}</h2> <br /><a href='/hooks/public/down/wlimit/{res[4]}/{fid}/d'>Download</a> <br /> <p>Uses left: {res[3]}</p>"  # noqa
+
+
 @app.before_request
 def middle_fleet_auth():
     print(request.endpoint, request.url, request.path)
-    if request.endpoint == "hello_world":
+    if (
+        request.endpoint == "hello_world"
+        or "hooks_public_down_onetime"
+        or "hooks_public_down_onetime_page"
+    ):
         return
 
     token = request.headers.get("Authorization").split(" ")[1]
