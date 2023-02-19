@@ -33,20 +33,17 @@ def middle_fleet_auth():
             "Authorization": f"Bearer {token}",
         },
     )
-    drop2_auth = (
-        bodydata.get("dname")
-        in [
-            d.get("name")
-            for d in r.json().get("directives")
-            if d.get("serviceId") == bodydata.get("serviceId")
-        ],
-    )
+    drop2_auth = bodydata.get("dname") in [
+        d.get("name")
+        for d in r.json().get("directives")
+        if d.get("serviceId") == bodydata.get("serviceId")
+    ]
     print("drop2 auth:", drop2_auth)
     if r.json().get("success") is None or not r.json().get("success") or not drop2_auth:
         return "Unauthorized", 401
 
 
-@app.route("/", methods=["POST"])
+@app.route("/drop2/bill/panel", methods=["POST"])
 def upload():
     file_to_upload = request.files["file"]
     if file_to_upload:
