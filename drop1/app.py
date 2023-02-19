@@ -83,7 +83,7 @@ def hooks_public_down_wlimit_page(ident, file_id):
     if res[3] <= 0:
         # delete the file
         try:
-            os.remove(os.path.join(os.getcwd(), "files", res[2]))
+            os.remove(os.path.join(os.getcwd(), "files", res[1]))
         except FileNotFoundError:
             pass
         return "You cannot download this anymore", 400
@@ -92,7 +92,7 @@ def hooks_public_down_wlimit_page(ident, file_id):
     if datetime.now() > datetime.strptime(res[6].split(".")[0], "%Y-%m-%d %H:%M:%S"):
         # delete the file
         try:
-            os.remove(os.path.join(os.getcwd(), "files", res[2]))
+            os.remove(os.path.join(os.getcwd(), "files", res[1]))
         except FileNotFoundError:
             pass
         return "This file has expired", 400
