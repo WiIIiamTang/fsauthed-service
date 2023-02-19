@@ -65,7 +65,7 @@ def hooks_public_down_wlimit(ident, file_id):
     connection.commit()
     connection.close()
 
-    return send_file(file_path, as_attachment=True, download_name=f"{fid}_{res[2]}")
+    return send_file(file_path, as_attachment=True, download_name=f"{res[2]}")
 
 
 @app.route("/hooks/public/down/wlimit/<string:ident>/<string:file_id>")
