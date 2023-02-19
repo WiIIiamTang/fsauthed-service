@@ -60,15 +60,15 @@ def upload():
         cur.execute(
             "INSERT INTO files (ident, ident_user_friendly, file_id, path, uses_left, uses_total, created_at, expires_at, file_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
-                uuid.uuid4(),
+                str(uuid.uuid4()),
                 "bill",
-                uuid.uuid4(),
-                path,
+                str(uuid.uuid4()),
+                str(path),
                 2,
                 0,
                 str(datetime.now()),
                 str(datetime.now() + timedelta(days=1)),
-                request.content_length,
+                int(request.content_length),
             ),
         )
         con.commit()
