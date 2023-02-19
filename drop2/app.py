@@ -33,8 +33,7 @@ def middle_fleet_auth():
             "Authorization": f"Bearer {token}",
         },
     )
-    print(
-        "auth:",
+    drop2_auth = (
         bodydata.get("dname")
         in [
             d.get("name")
@@ -42,7 +41,8 @@ def middle_fleet_auth():
             if d.get("serviceId") == bodydata.get("serviceId")
         ],
     )
-    if r.json().get("success") is None or not r.json().get("success"):
+    print("drop2 auth:", drop2_auth)
+    if r.json().get("success") is None or not r.json().get("success") or not drop2_auth:
         return "Unauthorized", 401
 
 
