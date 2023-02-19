@@ -1,3 +1,10 @@
+# dropx
+
+- logs, metrics sync from devices
+- ephemeral file sharing service
+
+# pi
+
 ## Instructions:
 
 0. SSH into the pi
