@@ -1,6 +1,10 @@
 from flask import Flask, request
 import requests
 import json
+import os
+import sqlite3
+import uuid
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -13,7 +17,8 @@ def middle_fleet_auth():
         return "Invalid request", 400
 
     token = request.headers.get("Authorization").split(" ")[1]
-    bodydata = request.get_json()
+    # get form data
+    bodydata = request.form.to_dict()
     if type(bodydata) is not dict:
         try:
             bodydata = json.loads(bodydata)
@@ -46,6 +51,27 @@ def middle_fleet_auth():
 @app.route("/drop2/bill/panel", methods=["POST"])
 def upload():
     file_to_upload = request.files["file"]
+    print("received file:", file_to_upload)
     if file_to_upload:
-        file_to_upload.save("file.txt")
+        path = os.path.join("..", "drop1", "files", file_to_upload.filename)
+        file_to_upload.save(path)
+        con = sqlite3.connect(os.path.join("..", "drop1", "drop1.db"))
+        cur = con.cursor()
+        cur.execute(
+            "INSERT INTO files (ident, ident_user_friendly, file_id, path, uses_left, uses_total, created_at, expires_at, file_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                uuid.uuid4(),
+                "bill",
+                uuid.uuid4(),
+                path,
+                2,
+                0,
+                str(datetime.now()),
+                str(datetime.now() + timedelta(days=1)),
+                request.content_length,
+            ),
+        )
+        con.commit()
+        con.close()
         return "File uploaded successfully", 200
+    return "File upload failed", 400
