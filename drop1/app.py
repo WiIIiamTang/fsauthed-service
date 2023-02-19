@@ -81,14 +81,28 @@ def hooks_public_down_wlimit_page(ident, file_id):
 
     res = res[0]
     if res[3] <= 0:
+        # delete the file
+        try:
+            os.remove(os.path.join(os.getcwd(), "files", res[2]))
+        except FileNotFoundError:
+            pass
         return "You cannot download this anymore", 400
+
+    # also check if expired
+    if datetime.now() > datetime.strptime(res[6].split(".")[0], "%Y-%m-%d %H:%M:%S"):
+        # delete the file
+        try:
+            os.remove(os.path.join(os.getcwd(), "files", res[2]))
+        except FileNotFoundError:
+            pass
+        return "This file has expired", 400
 
     ident_user_friendly = res[0]
     fid = res[2]
     path = res[1]
     connection.close()
 
-    return f"<h2>{ident_user_friendly} wants to send a file over: {path} created at {res[5]}, expires at {res[6]} </h2> <br /><a href='/hooks/public/down/wlimit/{res[4]}/{fid}/d'>Download</a> <br /> <p>Uses left: {res[3]}</p><p>Original request size: {res[7]}</p>"  # noqa
+    return f"<h2>{ident_user_friendly} wants to send a file over: {path} created at {res[5]}, expires at {res[6]} </h2> <br /><a href='/hooks/public/down/wlimit/{res[4]}/{fid}/d'>Download</a> <br /> <p>Uses left: {res[3]}</p><p>Original request size: {res[7]}B</p>"  # noqa
 
 
 @app.before_request
