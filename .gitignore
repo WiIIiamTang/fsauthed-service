@@ -1,4 +1,5 @@
 *.json
+!drop3/*.json
 *.txt
 __pycache__
 *.db
