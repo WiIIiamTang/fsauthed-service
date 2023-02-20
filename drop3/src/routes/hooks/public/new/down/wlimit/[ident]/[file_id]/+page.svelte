@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
     import type { PageData } from './$types';
-    import * as dayjs from 'dayjs';
+    import dayjs from 'dayjs';
     import utc from 'dayjs/plugin/utc';
     dayjs.extend(utc);
 
