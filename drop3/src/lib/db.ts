@@ -3,9 +3,12 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const root_git_repo_drop3 = process.cwd();
+const path_to_db = join(root_git_repo_drop3, '..', 'drop1', 'drop1.db');
+console.log('path_to_db', path_to_db);
 
 // the db is in ../../../drop1/drop1.db
-const db = new Database(join(__dirname, '..', '..', '..', 'drop1', 'drop1.db'));
+const db = new Database(path_to_db);
 db.pragma('journal_mode = WAL');
 
 export const get_file = (ident: string, file_id: string) => {
