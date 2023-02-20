@@ -1,7 +1,17 @@
 # dropx
 
+A collection of microservices for
+
 - logs, metrics sync from devices
 - ephemeral file sharing service
+
+1: main file sharing app and legacy download page
+
+2: file upload route
+
+3: new download page
+
+4: automated workflows
 
 # pi
 
