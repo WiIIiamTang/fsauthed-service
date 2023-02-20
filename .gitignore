@@ -5,3 +5,5 @@ __pycache__
 *.db-journal
 drop1/files/*
 !drop1/files/.gitkeep
+*.db-shm
+*.db-wal
