@@ -28,7 +28,8 @@ def hooks_public_down_wlimit(ident, file_id):
     connection = sqlite3.connect("drop1.db")
     cursor = connection.cursor()
     res = cursor.execute(
-        f"SELECT file_id, ident_user_friendly, path, uses_left, expires_at FROM files WHERE ident='{ident}' AND file_id='{file_id}'"  # noqa
+        "SELECT file_id, ident_user_friendly, path, uses_left, expires_at FROM files WHERE ident=? AND file_id=?",  # noqa
+        (ident, file_id),
     )
     res = res.fetchall()
     if len(res) == 0:
@@ -57,10 +58,12 @@ def hooks_public_down_wlimit(ident, file_id):
     fid = res[0]
 
     cursor.execute(
-        f"UPDATE files SET uses_left=uses_left-1 WHERE ident='{ident}' AND file_id='{file_id}'"  # noqa
+        f"UPDATE files SET uses_left=uses_left-1 WHERE ident=? AND file_id=?",  # noqa
+        (ident, file_id),
     )
     cursor.execute(
-        f"INSERT INTO downloaded_by (ident, file_id, ip_address) VALUES ('{ident}', '{file_id}', '{request.access_route[-1]}')"  # noqa
+        f"INSERT INTO downloaded_by (ident, file_id, ip_address) VALUES (?, ?, ?)",  # noqa
+        (ident, file_id, request.access_route[-1]),
     )
     connection.commit()
     connection.close()
@@ -73,7 +76,8 @@ def hooks_public_down_wlimit_page(ident, file_id):
     connection = sqlite3.connect("drop1.db")
     cursor = connection.cursor()
     res = cursor.execute(
-        f"SELECT ident_user_friendly, path, file_id, uses_left, ident, created_at, expires_at, file_size FROM files WHERE ident='{ident}' AND file_id='{file_id}'"  # noqa
+        f"SELECT ident_user_friendly, path, file_id, uses_left, ident, created_at, expires_at, file_size FROM files WHERE ident=? AND file_id=?",  # noqa
+        (ident, file_id),
     )
     res = res.fetchall()
     if len(res) == 0:
